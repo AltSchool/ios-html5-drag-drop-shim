@@ -150,7 +150,11 @@ module DragDropPolyfill {
         supportsPassive = supportsPassiveEventListener();
 
         // add listeners suitable for detecting a potential drag operation
-        addDocumentListener( "touchstart", onTouchstart, false );
+        if ( config.holdToDrag ) {
+          addDocumentListener( "touchstart", touchstartDelay(config.holdToDrag), false );
+        } else {
+          addDocumentListener( "touchstart", onTouchstart, false );
+        }
     }
 
     //</editor-fold>
@@ -192,6 +196,45 @@ module DragDropPolyfill {
             // rethrow exception after cleanup
             throw err;
         }
+    }
+
+    // delayed touch start event
+    function touchstartDelay(delay) {
+      return function(evt){
+        let el = evt.target;
+
+        let heldItem = function() {
+          end.off();
+          cancel.off();
+          scroll.off();
+          onTouchstart(evt);
+        };
+
+        let onReleasedItem = function() {
+          end.off();
+          cancel.off();
+          scroll.off();
+          clearTimeout(timer);
+        };
+
+        let timer = setTimeout(heldItem, delay);
+
+        let end = onEvt(el, 'touchend', onReleasedItem, this);
+        let cancel = onEvt(el, 'touchcancel', onReleasedItem, this);
+        let scroll = onEvt(window, 'scroll', onReleasedItem, this);
+      };
+    }
+
+    function onEvt(el, event, handler, context) {
+      if(context) {
+        handler = handler.bind(context);
+      }
+      el.addEventListener(event, handler);
+      return {
+        off: function() {
+          return el.removeEventListener(event, handler);
+        }
+      };
     }
 
     /**
