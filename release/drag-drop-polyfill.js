@@ -52,7 +52,12 @@ var DragDropPolyfill;
         }
         console.log("dnd-poly: Applying mobile drag and drop polyfill.");
         supportsPassive = supportsPassiveEventListener();
-        addDocumentListener("touchstart", onTouchstart, false);
+        if (config.holdToDrag) {
+            addDocumentListener("touchstart", touchstartDelay(config.holdToDrag), false);
+        }
+        else {
+            addDocumentListener("touchstart", onTouchstart, false);
+        }
     }
     DragDropPolyfill.Initialize = Initialize;
     var activeDragOperation;
@@ -73,6 +78,38 @@ var DragDropPolyfill;
             dragOperationEnded(config, e, 3);
             throw err;
         }
+    }
+    function touchstartDelay(delay) {
+        return function (evt) {
+            var el = evt.target;
+            var heldItem = function () {
+                end.off();
+                cancel.off();
+                scroll.off();
+                onTouchstart(evt);
+            };
+            var onReleasedItem = function () {
+                end.off();
+                cancel.off();
+                scroll.off();
+                clearTimeout(timer);
+            };
+            var timer = setTimeout(heldItem, delay);
+            var end = onEvt(el, 'touchend', onReleasedItem, this);
+            var cancel = onEvt(el, 'touchcancel', onReleasedItem, this);
+            var scroll = onEvt(window, 'scroll', onReleasedItem, this);
+        };
+    }
+    function onEvt(el, event, handler, context) {
+        if (context) {
+            handler = handler.bind(context);
+        }
+        el.addEventListener(event, handler);
+        return {
+            off: function () {
+                return el.removeEventListener(event, handler);
+            }
+        };
     }
     function tryFindDraggableTarget(event) {
         var el = event.target;
