@@ -1402,7 +1402,7 @@ module DragDropPolyfill {
             y += offset.y;
         }
 
-        if( centerOnCoordinates ) {
+        if( centerOnCoordinates && <any>dragImage ) {
             x -= (parseInt( <any>dragImage.offsetWidth, 10 ) / 2);
             y -= (parseInt( <any>dragImage.offsetHeight, 10 ) / 2);
         }
