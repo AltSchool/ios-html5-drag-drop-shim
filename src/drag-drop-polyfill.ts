@@ -1410,9 +1410,11 @@ module DragDropPolyfill {
         // using translate3d for best performance
         const translate = "translate3d(" + x + "px," + y + "px, 0)";
 
-        for( let i = 0; i < TRANSFORM_CSS_VENDOR_PREFIXES.length; i++ ) {
+        if (<any>dragImage) {
+          for( let i = 0; i < TRANSFORM_CSS_VENDOR_PREFIXES.length; i++ ) {
             const transformProp = TRANSFORM_CSS_VENDOR_PREFIXES[ i ] + "transform";
             dragImage.style[ transformProp ] = translate + " " + originalTransforms[ i ];
+          }
         }
     }
 
