@@ -664,9 +664,11 @@ var DragDropPolyfill;
             y -= (parseInt(dragImage.offsetHeight, 10) / 2);
         }
         var translate = "translate3d(" + x + "px," + y + "px, 0)";
-        for (var i = 0; i < TRANSFORM_CSS_VENDOR_PREFIXES.length; i++) {
-            var transformProp = TRANSFORM_CSS_VENDOR_PREFIXES[i] + "transform";
-            dragImage.style[transformProp] = translate + " " + originalTransforms[i];
+        if (dragImage) {
+            for (var i = 0; i < TRANSFORM_CSS_VENDOR_PREFIXES.length; i++) {
+                var transformProp = TRANSFORM_CSS_VENDOR_PREFIXES[i] + "transform";
+                dragImage.style[transformProp] = translate + " " + originalTransforms[i];
+            }
         }
     }
     function applyDragImageSnapback(sourceEl, dragImage, dragImageTransforms, transitionEndCb) {
