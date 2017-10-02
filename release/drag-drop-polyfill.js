@@ -659,6 +659,9 @@ var DragDropPolyfill;
             x += offset.x;
             y += offset.y;
         }
+        if (!dragImage) {
+            debugger;
+        }
         if (centerOnCoordinates) {
             x -= (parseInt(dragImage.offsetWidth, 10) / 2);
             y -= (parseInt(dragImage.offsetHeight, 10) / 2);
