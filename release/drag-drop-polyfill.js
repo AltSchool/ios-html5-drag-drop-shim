@@ -659,16 +659,14 @@ var DragDropPolyfill;
             x += offset.x;
             y += offset.y;
         }
-        if (centerOnCoordinates && dragImage) {
+        if (centerOnCoordinates) {
             x -= (parseInt(dragImage.offsetWidth, 10) / 2);
             y -= (parseInt(dragImage.offsetHeight, 10) / 2);
         }
         var translate = "translate3d(" + x + "px," + y + "px, 0)";
-        if (dragImage) {
-            for (var i = 0; i < TRANSFORM_CSS_VENDOR_PREFIXES.length; i++) {
-                var transformProp = TRANSFORM_CSS_VENDOR_PREFIXES[i] + "transform";
-                dragImage.style[transformProp] = translate + " " + originalTransforms[i];
-            }
+        for (var i = 0; i < TRANSFORM_CSS_VENDOR_PREFIXES.length; i++) {
+            var transformProp = TRANSFORM_CSS_VENDOR_PREFIXES[i] + "transform";
+            dragImage.style[transformProp] = translate + " " + originalTransforms[i];
         }
     }
     function applyDragImageSnapback(sourceEl, dragImage, dragImageTransforms, transitionEndCb) {
